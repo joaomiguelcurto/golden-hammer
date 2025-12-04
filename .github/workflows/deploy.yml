@@ -5,7 +5,7 @@ on:
   push:
     branches:
       # Change 'main' to your default branch if it's different (e.g., 'master')
-      - main 
+      - main
   # Allows you to run the deployment manually from the Actions tab
   workflow_dispatch:
 
@@ -13,7 +13,7 @@ jobs:
   ftp_upload:
     name: Upload PHP Files
     runs-on: ubuntu-latest
-    
+
     # 2. Define the steps for the job
     steps:
       # Step 1: Check out the repository code
@@ -30,35 +30,29 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          
+
           # Optional: Use 'sftp' if your host supports it (recommended for security)
-          protocol: ftp 
+          protocol: ftp
 
           # --- Configuration for File Paths ---
           # The source directory in your GitHub repo to upload from (defaults to project root)
           local-dir: ./
-          
+
           # The target directory on the FTP server (e.g., your public_html or httpdocs folder)
           server-dir: /public_html/
-          
+
           # --- File Filtering ---
-          # IMPORTANT: Only include files ending in .php and other necessary web files.
-          # This ensures that non-PHP files like node_modules, git files, or configuration 
-          # from other parts of your development environment are excluded.
-          include: |
-            *.php
-            *.html
-            *.css
-            *.js
-            *.jpg
-            *.png
-            # Add any other file types (e.g., assets) you need for your website
-            
+          # IMPORTANT: Patterns should use glob syntax properly
+          # Each pattern should be on its own line with proper glob matching
+
           # Exclude common developer files/folders that should not be on the server
           exclude: |
-            .git*
-            .git*/**
-            .github*/**
-            node_modules/**
-            package.json
-            package-lock.json
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/package.json
+            **/package-lock.json
+            **/.env
+            **/.DS_Store
+            **/Thumbs.db
