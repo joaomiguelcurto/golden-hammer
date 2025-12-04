@@ -4,7 +4,7 @@
  */
 
 // Configurações do servidor de produção
-$host = 'srv1657.hstgr.io'; // ou tenta 'localhost' se estiver no mesmo servidor
+$host = 'localhost'; // Tenta localhost primeiro
 $dbname = 'u506280443_loujoaDB';
 $username = 'u506280443_loujoadbUser';
 $password = 'P*JKmKU8+y';
@@ -27,13 +27,16 @@ try {
     );
     
     // Conexão estabelecida com sucesso
-    // echo "Conectado à base de dados com sucesso!"; // Descomentar para testar
+    echo "✅ Conectado à base de dados com sucesso!<br>"; // Descomentar para testar
     
 } catch (PDOException $e) {
-    // Em produção, não mostres detalhes do erro
-    die("Erro de conexão à base de dados. Contacta o administrador.");
+    // MODO DEBUG - Ver o erro real
+    die("<strong>Erro de conexão:</strong> " . $e->getMessage() . "<br><br>" .
+        "<strong>Host:</strong> $host<br>" .
+        "<strong>Database:</strong> $dbname<br>" .
+        "<strong>Username:</strong> $username");
     
-    // Para debug (comentar em produção):
-    // die("Erro de conexão: " . $e->getMessage());
+    // Em produção, usa isto:
+    // die("Erro de conexão à base de dados. Contacta o administrador.");
 }
 ?>
