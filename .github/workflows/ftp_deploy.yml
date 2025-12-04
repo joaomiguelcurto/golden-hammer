@@ -1,0 +1,44 @@
+# ... (cabeçalho e 'on' permanecem os mesmos)
+
+jobs:
+  ftp_upload:
+    name: Upload PHP Files
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy PHP to Server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.3
+        with:
+          # --- Configuration for Server Connection ---
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftp 
+
+          # --- Configuration for File Paths ---
+          # 🚨 MUDANÇA AQUI: Aponta para a pasta 'src'
+          local-dir: ./src/
+          
+          # Mantém o caminho de destino no servidor (o diretório web raiz)
+          server-dir: /public_html/
+          
+          # --- File Filtering ---
+          # O filtro incluirá apenas ficheiros da pasta 'src' e seus subdiretórios
+          include: |
+            *.php
+            *.html
+            *.css
+            *.js
+            *.jpg
+            *.png
+            
+          exclude: |
+            .git*
+            .git*/**
+            .github*/**
+            node_modules/**
+            package.json
+            package-lock.json
