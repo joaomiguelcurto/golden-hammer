@@ -1,0 +1,64 @@
+name: 🚀 Deploy PHP Files via FTP
+
+# 1. Define when this workflow runs
+on:
+  push:
+    branches:
+      # Change 'main' to your default branch if it's different (e.g., 'master')
+      - main 
+  # Allows you to run the deployment manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  ftp_upload:
+    name: Upload PHP Files
+    runs-on: ubuntu-latest
+    
+    # 2. Define the steps for the job
+    steps:
+      # Step 1: Check out the repository code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Step 2: Use the FTP Deployment Action
+      # This action handles the connection and file transfer
+      - name: Deploy PHP to Server
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.3
+        with:
+          # --- Configuration for Server Connection ---
+          # Securely inject your server details from the GitHub Secrets you set up.
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          
+          # Optional: Use 'sftp' if your host supports it (recommended for security)
+          protocol: ftp 
+
+          # --- Configuration for File Paths ---
+          # The source directory in your GitHub repo to upload from (defaults to project root)
+          local-dir: ./
+          
+          # The target directory on the FTP server (e.g., your public_html or httpdocs folder)
+          server-dir: /public_html/
+          
+          # --- File Filtering ---
+          # IMPORTANT: Only include files ending in .php and other necessary web files.
+          # This ensures that non-PHP files like node_modules, git files, or configuration 
+          # from other parts of your development environment are excluded.
+          include: |
+            *.php
+            *.html
+            *.css
+            *.js
+            *.jpg
+            *.png
+            # Add any other file types (e.g., assets) you need for your website
+            
+          # Exclude common developer files/folders that should not be on the server
+          exclude: |
+            .git*
+            .git*/**
+            .github*/**
+            node_modules/**
+            package.json
+            package-lock.json
