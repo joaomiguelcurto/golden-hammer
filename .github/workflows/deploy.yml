@@ -39,7 +39,7 @@ jobs:
           local-dir: ./
 
           # The target directory on the FTP server (e.g., your public_html or httpdocs folder)
-          server-dir: /public_html/
+          server-dir: /
 
           # --- File Filtering ---
           # IMPORTANT: Patterns should use glob syntax properly
