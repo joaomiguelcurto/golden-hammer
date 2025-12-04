@@ -1,6 +1,6 @@
 <?php
 require_once 'config/db.php';
-echo "✅ Conexão à base de dados bem-sucedida!";
+echo "Conecxão à base de dados correu bem";
 
 // Testar se as tabelas existem
 $stmt = $pdo->query("SHOW TABLES");

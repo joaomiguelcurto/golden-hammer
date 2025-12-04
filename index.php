@@ -8,12 +8,15 @@ if (!isset($_SESSION['logado'])) {
 ?>
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <title>LouJoa - Dashboard</title>
 </head>
+
 <body>
     <h1>Bem-vindo, <?= htmlspecialchars($_SESSION['nome_utilizador']) ?>!</h1>
     <a href="logout.php">Sair</a>
 </body>
+
 </html>
