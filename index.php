@@ -18,6 +18,7 @@ if (!isset($_SESSION['logado'])) {
 
 <body>
     <h1>Bem-vindo, <?= htmlspecialchars($_SESSION['nome_utilizador']) ?>!</h1>
+    <h2><?php test_db() ?></h2>
     <a href="logout.php">Sair</a>
 </body>
 
