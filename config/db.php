@@ -24,7 +24,7 @@ try {
     );
 
     // Conexão estabelecida com sucesso
-    // echo "Conectado á BD<br>";
+    // echo "Conectado á DB<br>";
 
 } catch (PDOException $e) {
     // Ver erro

@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+include "test/teste_db.php";
+
 if (!isset($_SESSION['logado'])) {
     header("Location: login.php");
     exit;
