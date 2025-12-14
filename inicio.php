@@ -45,17 +45,17 @@ $msg = obterMensagem();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LouJoa - Leilões em Destaque</title>
-    <link rel="stylesheet" href="css/inicio.css">
+    <title>Golden Hammer - Leilões em Destaque</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
     <div class="container">
         <header>
-            <div class="logo">LouJoa</div>
+            <div class="logo">Golden Hammer</div>
             <div class="user-info">
                 <span class="user-name">Olá, <?= limpar($nome_utilizador) ?>!</span>
-                <a href="criar_item.php" class="btn btn-primary">➕ Criar Item</a>
+                <a href="criar_item.php" class="btn btn-primary">Criar Item</a>
                 <a href="meus_leiloes.php" class="btn btn-secondary">Meus Leilões</a>
                 <a href="logout.php" class="btn btn-secondary">Sair</a>
             </div>
@@ -74,7 +74,6 @@ $msg = obterMensagem();
                 <?php foreach ($leiloes as $leilao): ?>
                     <?php
                     // Usar função para calcular tempo
-                    $tempo = calcularTempoRestante($leilao['fim']);
                     $tempo_formatado = formatarTempoRestante($leilao['fim']);
                     
                     // Determinar preço a exibir
@@ -101,8 +100,8 @@ $msg = obterMensagem();
                         </div>
                         
                         <div class="leilao-stats">
-                            <span>Lançes <?= $num_lances ?> lance<?= $num_lances != 1 ? 's' : '' ?></span>
-                            <span class="tempo-restante">Restante: <?= $tempo_formatado ?></span>
+                            <span>Lançes: <?= $num_lances ?> lance<?= $num_lances != 1 ? 's' : '' ?></span>
+                            <span class="tempo-restante">Tempo: <?= $tempo_formatado ?></span>
                         </div>
                         
                         <a href="ver_leilao.php?id=<?= $leilao['leilao_id'] ?>">
@@ -115,7 +114,7 @@ $msg = obterMensagem();
             <div class="sem-leiloes">
                 <h2>Nenhum leilão ativo no momento</h2>
                 <p>Seja o primeiro a criar um item para leiloar!</p>
-                <a href="criar_item.php" class="btn btn-primary">Criar Primeiro Item</a>
+                <a href="criar_item.php" class="btn btn-primary btn-large">Criar Primeiro Item</a>
             </div>
         <?php endif; ?>
     </div>
