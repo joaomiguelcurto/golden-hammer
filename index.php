@@ -19,6 +19,7 @@ if (!isset($_SESSION['logado'])) {
 <body>
     <h1>Bem-vindo, <?= htmlspecialchars($_SESSION['nome_utilizador']) ?>!</h1>
     <h2><?php showTables() ?></h2>
+    <a href="inicio.php"></a>
     <a href="logout.php">Sair</a>
 </body>
 
