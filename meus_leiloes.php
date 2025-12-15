@@ -75,12 +75,14 @@ $msg = obterMensagem();
 
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Golden Hammer - Meus Leilões</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -129,9 +131,14 @@ $msg = obterMensagem();
                     }
                     ?>
                     <div class="leilao-card">
-                        <span class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
-                        <?= $badge_extra ?>
-                        <?= $vencedor_badge ?>
+                        <div class="item-header">
+                            <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
+                            <div class="badges-direita">
+                                <span class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
+                                <?= $badge_extra ?>
+                                <?= $vencedor_badge ?>
+                            </div>
+                        </div>
 
                         <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
                         <div class="item-descricao"><?= limpar($leilao['item_descricao']) ?></div>
@@ -162,7 +169,8 @@ $msg = obterMensagem();
                 <h2>Ainda não participas em nenhum leilão</h2>
                 <p>Cria o teu primeiro item ou explora os leilões em destaque para dar lance!</p>
                 <a href="criar_item.php" class="btn btn-primary btn-large">Criar Item</a>
-                <a href="inicio.php" class="btn btn-secondary btn-large" style="margin-left: 20px;">Ver Leilões em Destaque</a>
+                <a href="inicio.php" class="btn btn-secondary btn-large" style="margin-left: 20px;">Ver Leilões em
+                    Destaque</a>
             </div>
         <?php endif; ?>
     </div>
@@ -172,4 +180,5 @@ $msg = obterMensagem();
         setInterval(() => location.reload(), 60000);
     </script>
 </body>
+
 </html>
