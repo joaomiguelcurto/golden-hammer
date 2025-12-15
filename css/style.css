@@ -224,54 +224,12 @@ h2 {
     font-weight: 600;
 }
 
-.badges-direita {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    justify-content: flex-end;
-    align-items: center;
-}
-
-/* Ajuste nas badges para ficarem bonitinhas na linha */
-.categoria-badge,
-.categoria-badge.extra {
-    position: static; /* Remove o position absolute anterior */
-    display: inline-block;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-}
-
-/* Se quiser manter o estilo especial da badge "Com Lance" */
-.categoria-badge.extra[style*="94d2bd"] {
-    background: linear-gradient(135deg, #94d2bd 0%, #0a9396 100%);
-}
-
-/* Badge de vencedor */
-.categoria-badge[style*="ee9b00"] {
-    background: linear-gradient(135deg, #ee9b00 0%, #ca6702 100%);
-    font-weight: bold;
-}
-
-/* Novo container para o cabeçalho do item */
-.item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
 .item-nome {
     font-size: 20px;
     font-weight: bold;
     color: var(--cor-primaria);
-    margin: 0;
-    padding-right: 10px;
-    flex: 1;
+    margin-bottom: 10px;
+    margin-right: 80px;
 }
 
 .item-descricao {
@@ -447,4 +405,57 @@ h2 {
     .form-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Novo cabeçalho do item com badges à direita */
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    flex-wrap: nowrap; /* Ou 'wrap' se quiser que desça em telas pequenas */
+    gap: 10px;
+}
+
+.item-header .item-nome {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--cor-primaria);
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    margin-right: 10px; /* Espaço extra à direita */
+}
+
+/* Container das badges à direita */
+.item-header .badges-direita {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+}
+
+/* Forçar badges a ficarem na linha, sem position absolute */
+.item-header .categoria-badge,
+.item-header .categoria-badge.extra {
+    position: static !important; /* Sobrescreve qualquer position anterior */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Remover qualquer margin-right antigo do nome */
+.leilao-card .item-nome {
+    margin-right: 0 !important;
+}
+
+/* Se as badges extras tiverem style inline, manter o gradiente */
+.badges-direita span[style*="gradient"] {
+    font-weight: bold;
 }

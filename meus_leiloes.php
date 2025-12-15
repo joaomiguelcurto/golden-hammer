@@ -132,7 +132,7 @@ $msg = obterMensagem();
                     ?>
                     <div class="leilao-card">
                         <div class="item-header">
-                            <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
+                            <h3 class="item-nome"><?= limpar($leilao['item_nome']) ?></h3>
                             <div class="badges-direita">
                                 <span class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
                                 <?= $badge_extra ?>
