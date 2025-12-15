@@ -131,14 +131,17 @@ $msg = obterMensagem();
                     }
                     ?>
                     <div class="leilao-card">
-                        <div class="leilao-badges"> <span
-                                class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
-                            <?= $badge_extra ?>
-                            <?= $vencedor_badge ?>
-                        </div>
-                        <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
 
-                        <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
+                        <div class="leilao-header">
+                            <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
+
+                            <div class="leilao-badges">
+                                <?= $vencedor_badge ?>
+                                <span class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
+                                <?= $badge_extra ?>
+                            </div>
+                        </div>
+
                         <div class="item-descricao"><?= limpar($leilao['item_descricao']) ?></div>
                         <div class="dono-info">Por: <?= limpar($leilao['dono_nome']) ?></div>
 
