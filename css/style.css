@@ -202,7 +202,7 @@ h2 {
     padding: 25px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    position: relative;
+    position: relative; /* Importante para o posicionamento do badge */
     border-top: 3px solid var(--cor-terciaria);
 }
 
@@ -278,6 +278,29 @@ h2 {
     margin-bottom: 15px;
     font-size: 13px;
     color: var(--cor-texto-medio);
+}
+
+/* Container para alinhar os badges */
+.leilao-badges {
+    display: flex;
+    gap: 10px; /* Espaçamento entre os badges */
+    flex-wrap: wrap; /* Para quebrar a linha se houver muitos */
+    position: absolute; /* Para que fique no canto superior direito */
+    top: 15px;
+    right: 15px;
+    max-width: 80%; /* Para que não invada muito o item-nome */
+    justify-content: flex-end; /* Alinhar à direita */
+}
+
+.categoria-badge {
+    /* Mantenha o estilo visual, mas remova o 'position' e 'top/right' antigos */
+    background: linear-gradient(135deg, var(--cor-destaque) 0%, var(--cor-destaque-escuro) 100%);
+    color: var(--cor-texto-claro);
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    /* Remover: position: flex; top: 15px; right: 15px; */ 
 }
 
 .tempo-restante {
@@ -407,55 +430,3 @@ h2 {
     }
 }
 
-/* Novo cabeçalho do item com badges à direita */
-.item-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    flex-wrap: nowrap; /* Ou 'wrap' se quiser que desça em telas pequenas */
-    gap: 10px;
-}
-
-.item-header .item-nome {
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--cor-primaria);
-    margin: 0;
-    padding: 0;
-    flex: 1;
-    margin-right: 10px; /* Espaço extra à direita */
-}
-
-/* Container das badges à direita */
-.item-header .badges-direita {
-    display: flex;
-    gap: 8px;
-    flex-shrink: 0;
-    align-items: center;
-}
-
-/* Forçar badges a ficarem na linha, sem position absolute */
-.item-header .categoria-badge,
-.item-header .categoria-badge.extra {
-    position: static !important; /* Sobrescreve qualquer position anterior */
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Remover qualquer margin-right antigo do nome */
-.leilao-card .item-nome {
-    margin-right: 0 !important;
-}
-
-/* Se as badges extras tiverem style inline, manter o gradiente */
-.badges-direita span[style*="gradient"] {
-    font-weight: bold;
-}
