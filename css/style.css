@@ -224,6 +224,13 @@ h2 {
     font-weight: 600;
 }
 
+.categoria-badge.extra {
+    top: 15px;
+    right: 105px; 
+    background: initial; 
+    color: initial; 
+}
+
 .item-nome {
     font-size: 20px;
     font-weight: bold;
