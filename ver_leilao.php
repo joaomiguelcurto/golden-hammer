@@ -253,13 +253,13 @@ $msg = obterMensagem();
                                 Mínimo<br><?= formatarMoeda($proximo_lance_minimo) ?>
                             </button>
                             <button type="button" class="btn-lance-rapido" onclick="setLance(<?= $proximo_lance_minimo + 5 ?>)">
-                                +€5<br><?= formatarMoeda($proximo_lance_minimo + 5) ?>
+                                +15%<br><?= formatarMoeda($proximo_lance_minimo * 1.15) ?>
                             </button>
                             <button type="button" class="btn-lance-rapido" onclick="setLance(<?= $proximo_lance_minimo + 10 ?>)">
-                                +€10<br><?= formatarMoeda($proximo_lance_minimo + 10) ?>
+                                +30%<br><?= formatarMoeda($proximo_lance_minimo * 1.30) ?>
                             </button>
                             <button type="button" class="btn-lance-rapido" onclick="setLance(<?= $proximo_lance_minimo + 20 ?>)">
-                                +€20<br><?= formatarMoeda($proximo_lance_minimo + 20) ?>
+                                +50%<br><?= formatarMoeda($proximo_lance_minimo + 1.50) ?>
                             </button>
                         </div>
                     </form>
