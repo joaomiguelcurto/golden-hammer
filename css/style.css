@@ -213,9 +213,6 @@ h2 {
 }
 
 .categoria-badge {
-    position: absolute;
-    top: 15px;
-    right: 15px;
     background: linear-gradient(135deg, var(--cor-destaque) 0%, var(--cor-destaque-escuro) 100%);
     color: var(--cor-texto-claro);
     padding: 5px 12px;
@@ -229,6 +226,15 @@ h2 {
     right: 105px; 
     background: initial; 
     color: initial; 
+}
+
+.badges-wrapper {
+    position: absolute; 
+    top: 15px; 
+    right: 15px; 
+    display: flex;
+    gap: 8px;
+    flex-direction: row-reverse;
 }
 
 .item-nome {

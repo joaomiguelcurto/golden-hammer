@@ -75,12 +75,14 @@ $msg = obterMensagem();
 
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Golden Hammer - Meus Leilões</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -114,7 +116,7 @@ $msg = obterMensagem();
                     if ($leilao['tipo'] === 'criado') {
                         $badge_extra = '<span class="categoria-badge extra">Meu Item</span>';
                     } elseif ($leilao['tipo'] === 'lance') {
-                        $badge_extra = '<span class="categoria-badge extra" style="background: linear-gradient(135deg, #94d2bd 0%, #0a9396 100%);">Com Lance</span>';
+                        $badge_extra = '<span class="categoria-badge extra">Com Lance</span>';
                     }
 
                     // Badge de vencedor
@@ -129,42 +131,44 @@ $msg = obterMensagem();
                     }
                     ?>
                     <div class="leilao-card">
-                        <span class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
-                        <?= $badge_extra ?>
-                        <?= $vencedor_badge ?>
+                        <div class="badges-wrapper"> <span
+                                class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
+                            <?= $badge_extra ?>
+                            <?= $vencedor_badge ?>
+                        </div>
 
                         <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
                         <div class="item-descricao"><?= limpar($leilao['item_descricao']) ?></div>
                         <div class="dono-info">Por: <?= limpar($leilao['dono_nome']) ?></div>
-
-                        <div class="preco-info">
-                            <div>
-                                <div class="preco-label">
-                                    <?= $leilao['preco_atual'] > 0 ? 'Lance Atual' : 'Preço Inicial' ?>
-                                </div>
-                                <div class="preco-valor"><?= formatarMoeda($preco_exibir) ?></div>
-                            </div>
-                        </div>
-
-                        <div class="leilao-stats">
-                            <span>Lances: <?= $num_lances ?> lance<?= $num_lances != 1 ? 's' : '' ?></span>
-                            <span class="tempo-restante">Tempo: <?= $tempo_formatado ?></span>
-                        </div>
-
-                        <a href="ver_leilao.php?id=<?= $leilao['leilao_id'] ?>">
-                            <button class="btn-ver-leilao">Ver Leilão</button>
-                        </a>
                     </div>
-                <?php endforeach; ?>
-            </div>
-        <?php else: ?>
-            <div class="sem-leiloes">
-                <h2>Ainda não participas em nenhum leilão</h2>
-                <p>Cria o teu primeiro item ou explora os leilões em destaque para dar lance!</p>
-                <a href="criar_item.php" class="btn btn-primary btn-large">Criar Item</a>
-                <a href="inicio.php" class="btn btn-secondary btn-large" style="margin-left: 20px;">Ver Leilões em Destaque</a>
-            </div>
-        <?php endif; ?>
+                    <div class="preco-info">
+                        <div>
+                            <div class="preco-label">
+                                <?= $leilao['preco_atual'] > 0 ? 'Lance Atual' : 'Preço Inicial' ?>
+                            </div>
+                            <div class="preco-valor"><?= formatarMoeda($preco_exibir) ?></div>
+                        </div>
+                    </div>
+
+                    <div class="leilao-stats">
+                        <span>Lances: <?= $num_lances ?> lance<?= $num_lances != 1 ? 's' : '' ?></span>
+                        <span class="tempo-restante">Tempo: <?= $tempo_formatado ?></span>
+                    </div>
+
+                    <a href="ver_leilao.php?id=<?= $leilao['leilao_id'] ?>">
+                        <button class="btn-ver-leilao">Ver Leilão</button>
+                    </a>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php else: ?>
+        <div class="sem-leiloes">
+            <h2>Ainda não participas em nenhum leilão</h2>
+            <p>Cria o teu primeiro item ou explora os leilões em destaque para dar lance!</p>
+            <a href="criar_item.php" class="btn btn-primary btn-large">Criar Item</a>
+            <a href="inicio.php" class="btn btn-secondary btn-large" style="margin-left: 20px;">Ver Leilões em Destaque</a>
+        </div>
+    <?php endif; ?>
     </div>
 
     <script>
@@ -172,4 +176,5 @@ $msg = obterMensagem();
         setInterval(() => location.reload(), 60000);
     </script>
 </body>
+
 </html>
