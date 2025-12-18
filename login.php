@@ -55,6 +55,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="password" name="senha" placeholder="Palavra-passe" required>
             <button type="submit">Entrar</button>
         </form>
+
+        <div class="footer-link">
+            Não tens conta? <a href="register.php">Regista-te aqui</a>
+        </div>
+        
     </div>
 </body>
 
