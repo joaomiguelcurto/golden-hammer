@@ -62,23 +62,19 @@ button:hover {
     font-weight: bold;
 }
 
-/* Estilos adicionais para o link de registo */
+/* Estilo unificado para o link de rodapé */
 .footer-link {
     text-align: center;
-    margin-top: 25px;
+    margin-top: 20px; /* Ajustado para coincidir com o register.css */
     font-size: 14px;
-    color: #444;
-    border-top: 1px solid #eee; /* Linha subtil para separar do formulário */
-    padding-top: 20px;
 }
 
 .footer-link a {
-    color: #0A9396; /* Cor idêntica à do botão original */
+    color: #0A9396;
     text-decoration: none;
     font-weight: bold;
 }
 
 .footer-link a:hover {
     text-decoration: underline;
-    color: #005F73;
 }
