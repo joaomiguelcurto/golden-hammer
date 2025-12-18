@@ -24,6 +24,7 @@ $stmt = $pdo->prepare("
         i.nome as item_nome,
         i.descricao as item_descricao,
         i.categoria,
+        i.dono_id,
         u.nome_utilizador as dono_nome
     FROM leiloes l
     INNER JOIN itens i ON l.item_id = i.id
@@ -81,12 +82,30 @@ $msg = obterMensagem();
                     
                     // Contar lances usando função
                     $num_lances = contarLances($pdo, $leilao['leilao_id']);
+                    
+                    // Verificar se o item pertence ao utilizador logado
+                    $e_meu_item = ($leilao['dono_id'] == $user_id);
+                    
+                    // Verificar se o utilizador já deu lance neste leilão
+                    $stmt_lance = $pdo->prepare("SELECT COUNT(*) FROM lances WHERE leilao_id = ? AND utilizador_id = ?");
+                    $stmt_lance->execute([$leilao['leilao_id'], $user_id]);
+                    $tem_lance = $stmt_lance->fetchColumn() > 0;
                     ?>
                     
                     <div class="leilao-card">
-                        <span class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
+                        <div class="leilao-header">
+                            <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
+                            <div class="leilao-badges">
+                                <span class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
+                                <?php if ($e_meu_item): ?>
+                                    <span class="categoria-badge badge-meu-item">Meu Item</span>
+                                <?php endif; ?>
+                                <?php if ($tem_lance && !$e_meu_item): ?>
+                                    <span class="categoria-badge badge-com-lance">Com Lance</span>
+                                <?php endif; ?>
+                            </div>
+                        </div>
                         
-                        <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
                         <div class="item-descricao"><?= limpar($leilao['item_descricao']) ?></div>
                         <div class="dono-info">Por: <?= limpar($leilao['dono_nome']) ?></div>
                         
@@ -100,7 +119,7 @@ $msg = obterMensagem();
                         </div>
                         
                         <div class="leilao-stats">
-                            <span>Lançes: <?= $num_lances ?> lance<?= $num_lances != 1 ? 's' : '' ?></span>
+                            <span>Lances: <?= $num_lances ?> lance<?= $num_lances != 1 ? 's' : '' ?></span>
                             <span class="tempo-restante">Tempo: <?= $tempo_formatado ?></span>
                         </div>
                         
