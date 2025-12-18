@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="post">
             <input type="text" name="usuario" placeholder="Nome de utilizador ou email" required autofocus>
             <input type="password" name="senha" placeholder="Palavra-passe" required>
-            <button type="submit">Entrar</button>
+            <button type="submit" href="inicio.php">Entrar</button>
         </form>
 
         <div class="footer-link">
