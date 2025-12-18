@@ -298,13 +298,14 @@ h2 {
 
 .categoria-badge {
     /* Mantenha o estilo visual, mas remova o 'position' e 'top/right' antigos */
+    position: flex;
     background: linear-gradient(135deg, var(--cor-destaque) 0%, var(--cor-destaque-escuro) 100%);
     color: var(--cor-texto-claro);
     padding: 5px 12px;
     border-radius: 20px;
     font-size: 12px;
     font-weight: 600;
-    /* Remover: position: flex; top: 15px; right: 15px; */ 
+  
 }
 
 .tempo-restante {
