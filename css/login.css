@@ -62,15 +62,30 @@ button:hover {
     font-weight: bold;
 }
 
-/* Estilo unificado para o link de rodapé */
+/* "Não tens conta?" */
+button {
+    width: 100%;
+    padding: 13px;
+    background: #0A9396;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 17px;
+    cursor: pointer;
+    margin-bottom: 10px; 
+}
+
+
 .footer-link {
+    display: block; 
     text-align: center;
-    margin-top: 20px; /* Ajustado para coincidir com o register.css */
+    margin-top: 20px;
     font-size: 14px;
+    color: #333; 
 }
 
 .footer-link a {
-    color: #0A9396;
+    color: #0A9396 !important; 
     text-decoration: none;
     font-weight: bold;
 }

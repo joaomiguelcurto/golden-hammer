@@ -114,9 +114,9 @@ $msg = obterMensagem();
                     // Badges extras
                     $badge_extra = '';
                     if ($leilao['tipo'] === 'criado') {
-                        $badge_extra = '<span class="categoria-badge extra">Meu Item</span>';
+                        $badge_extra = '<span class="categoria-badge badge-meu-item">Meu Item</span>';
                     } elseif ($leilao['tipo'] === 'lance') {
-                        $badge_extra = '<span class="categoria-badge extra" style="background: linear-gradient(135deg, #94d2bd 0%, #0a9396 100%);">Com Lance</span>';
+                        $badge_extra = '<span class="categoria-badge badge-com-lance">Com Lance</span>';
                     }
 
                     // Badge de vencedor
@@ -126,25 +126,20 @@ $msg = obterMensagem();
                         $stmt_v->execute([$leilao['leilao_id']]);
                         $vencedor_id = $stmt_v->fetchColumn();
                         if ($vencedor_id == $user_id) {
-                            $vencedor_badge = '<span class="categoria-badge" style="background: linear-gradient(135deg, #ee9b00 0%, #ca6702 100%); font-weight: bold;">Vencido!</span>';
+                            $vencedor_badge = '<span class="categoria-badge badge-vencedor">Vencido!</span>';
                         }
                     }
                     ?>
                     <div class="leilao-card">
-
-                        <div class="leilao-badges"> <span
-                            class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
-                            <?= $badge_extra ?>
-                            <?= $vencedor_badge ?>
+                        <div class="leilao-header">
+                            <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
+                            <div class="leilao-badges">
+                                <span class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
+                                <?= $badge_extra ?>
+                                <?= $vencedor_badge ?>
+                            </div>
                         </div>
 
-                        <div class="item-nome"><?= limpar($leilao['item_nome']) ?>
-                            <div class="leilao-badges"> <span
-                            class="categoria-badge"><?= limpar($leilao['categoria'] ?? 'Geral') ?></span>
-                            <?= $badge_extra ?>
-                            <?= $vencedor_badge ?>
-                        </div>
-                        </div>
                         <div class="item-descricao"><?= limpar($leilao['item_descricao']) ?></div>
                         <div class="dono-info">Por: <?= limpar($leilao['dono_nome']) ?></div>
 

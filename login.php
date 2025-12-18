@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="footer-link">
             Não tens conta? <a href="register.php">Regista-te aqui</a>
         </div>
-        
+
     </div>
 </body>
 
