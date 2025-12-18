@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['nome_utilizador'] = $user['nome_utilizador'];
             $_SESSION['logado'] = true;
 
-            header("Location: index.php");
+            header("Location: inicio.php");
             exit;
         } else {
             $erro = "Utilizador ou senha incorretos!";
