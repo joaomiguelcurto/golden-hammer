@@ -1,6 +1,8 @@
 <?php
 session_start();
 require_once 'config/db.php';
+$file_css = 'css/login.css';
+$versioncss = filemtime($file_css);
 
 $erro = '';
 
@@ -38,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LouJoa - Login</title>
-    <link rel="stylesheet" href="css/login.css">
+    <link rel="stylesheet" href="css/login.css?v=<?= $versioncss ?>">
 </head>
 
 <body>
