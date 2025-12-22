@@ -480,3 +480,60 @@ h2 {
         align-items: flex-start;
     }
 }
+
+.leilao-card {
+    background: white;
+    border-radius: 15px;
+    padding: 0;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-top: 3px solid var(--cor-terciaria);
+    overflow: hidden;
+}
+
+.leilao-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    border-top-color: var(--cor-destaque);
+}
+
+/* Imagem do leilão no card */
+.leilao-imagem {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+    background: var(--cor-fundo-escuro);
+    position: relative;
+}
+
+.leilao-imagem img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.leilao-card:hover .leilao-imagem img {
+    transform: scale(1.05);
+}
+
+/* Ajustar padding do conteúdo quando há imagem */
+.leilao-card > .leilao-header,
+.leilao-card > .item-descricao,
+.leilao-card > .dono-info,
+.leilao-card > .preco-info,
+.leilao-card > .leilao-stats,
+.leilao-card > a {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.leilao-card > .leilao-header {
+    padding-top: 20px;
+}
+
+.leilao-card > a {
+    display: block;
+    padding-bottom: 25px;
+}

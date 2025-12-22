@@ -21,11 +21,13 @@ $stmt = $pdo->prepare("
         l.preco_inicial,
         l.preco_atual,
         l.estado,
+        i.id as item_id,
         i.nome as item_nome,
         i.descricao as item_descricao,
         i.categoria,
         i.dono_id,
-        u.nome_utilizador as dono_nome
+        u.nome_utilizador as dono_nome,
+        (SELECT caminho FROM item_imagens WHERE item_id = i.id ORDER BY ordem ASC LIMIT 1) as primeira_imagem
     FROM leiloes l
     INNER JOIN itens i ON l.item_id = i.id
     INNER JOIN utilizadores u ON i.dono_id = u.id
@@ -93,6 +95,13 @@ $msg = obterMensagem();
                     ?>
                     
                     <div class="leilao-card">
+                        <?php if ($leilao['primeira_imagem']): ?>
+                            <div class="leilao-imagem">
+                                <img src="uploads/<?= limpar($leilao['primeira_imagem']) ?>" 
+                                     alt="<?= limpar($leilao['item_nome']) ?>">
+                            </div>
+                        <?php endif; ?>
+                        
                         <div class="leilao-header">
                             <div class="item-nome"><?= limpar($leilao['item_nome']) ?></div>
                             <div class="leilao-badges">
