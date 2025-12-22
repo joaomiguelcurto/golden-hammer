@@ -199,16 +199,64 @@ h2 {
 .leilao-card {
     background: white;
     border-radius: 15px;
-    padding: 25px;
+    padding: 0;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     border-top: 3px solid var(--cor-terciaria);
+    overflow: hidden;
 }
 
 .leilao-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     border-top-color: var(--cor-destaque);
+}
+
+/* Imagem do leilão no card */
+.leilao-imagem {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+}
+
+.leilao-imagem img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.leilao-card:hover .leilao-imagem img {
+    transform: scale(1.08);
+}
+
+/* Ajustar padding do conteúdo quando há imagem */
+.leilao-card > .leilao-header,
+.leilao-card > .item-descricao,
+.leilao-card > .dono-info,
+.leilao-card > .preco-info,
+.leilao-card > .leilao-stats,
+.leilao-card > a {
+    padding-left: 25px;
+    padding-right: 25px;
+}
+
+.leilao-card > .leilao-header {
+    padding-top: 20px;
+}
+
+.leilao-card > a {
+    display: block;
+    padding-bottom: 25px;
 }
 
 .leilao-header {
@@ -479,65 +527,8 @@ h2 {
         flex-wrap: wrap;
         align-items: flex-start;
     }
-}
-
-.leilao-card {
-    background: white;
-    border-radius: 15px;
-    padding: 0;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    border-top: 3px solid var(--cor-terciaria);
-    overflow: hidden;
-}
-
-.leilao-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    border-top-color: var(--cor-destaque);
-}
-
-/* Imagem do leilão no card */
-.leilao-imagem {
-    width: 100%;
-    height: 220px;
-    overflow: hidden;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-}
-
-.leilao-imagem img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    display: block;
-    transition: transform 0.3s ease;
-}
-
-.leilao-card:hover .leilao-imagem img {
-    transform: scale(1.08);
-}
-
-/* Ajustar padding do conteúdo quando há imagem */
-.leilao-card > .leilao-header,
-.leilao-card > .item-descricao,
-.leilao-card > .dono-info,
-.leilao-card > .preco-info,
-.leilao-card > .leilao-stats,
-.leilao-card > a {
-    padding-left: 25px;
-    padding-right: 25px;
-}
-
-.leilao-card > .leilao-header {
-    padding-top: 20px;
-}
-
-.leilao-card > a {
-    display: block;
-    padding-bottom: 25px;
+    
+    .leilao-imagem {
+        height: 180px;
+    }
 }
