@@ -63,3 +63,60 @@
 .char-counter.warning {
     color: var(--cor-alerta);
 }
+
+/* Estilos para upload de imagens */
+.input-file {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    border: 2px dashed var(--cor-secundaria);
+    border-radius: 8px;
+    background: var(--cor-suave);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.input-file:hover {
+    border-color: var(--cor-destaque);
+    background: #fff9e6;
+}
+
+.preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.preview-item {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 2px solid var(--cor-terciaria);
+    aspect-ratio: 1;
+}
+
+.preview-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.preview-number {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: var(--cor-destaque);
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}

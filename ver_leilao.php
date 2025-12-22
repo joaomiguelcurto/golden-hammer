@@ -88,6 +88,16 @@ if (!$leilao) {
     redirecionarComMensagem('inicio.php', 'Leilão não encontrado', 'erro');
 }
 
+// Buscar imagens do item
+$stmt = $pdo->prepare("
+    SELECT caminho, ordem 
+    FROM item_imagens 
+    WHERE item_id = ? 
+    ORDER BY ordem ASC
+");
+$stmt->execute([$leilao['item_id']]);
+$imagens = $stmt->fetchAll();
+
 // Buscar histórico de lances
 $stmt = $pdo->prepare("
     SELECT 
@@ -145,6 +155,34 @@ $msg = obterMensagem();
         <div class="leilao-container">
             <!-- Detalhes do Item -->
             <div class="detalhes-item">
+                <!-- Galeria de Imagens -->
+                <?php if (count($imagens) > 0): ?>
+                <div class="galeria-container">
+                    <div class="imagem-principal">
+                        <img id="imagemPrincipal" src="uploads/<?= limpar($imagens[0]['caminho']) ?>" alt="<?= limpar($leilao['item_nome']) ?>">
+                        <div class="galeria-navegacao">
+                            <button class="btn-nav btn-prev" onclick="imagemAnterior()">❮</button>
+                            <button class="btn-nav btn-next" onclick="proximaImagem()">❯</button>
+                        </div>
+                        <div class="contador-imagens">
+                            <span id="imagemAtual">1</span> / <?= count($imagens) ?>
+                        </div>
+                    </div>
+                    
+                    <?php if (count($imagens) > 1): ?>
+                    <div class="miniaturas">
+                        <?php foreach ($imagens as $index => $img): ?>
+                            <div class="miniatura <?= $index === 0 ? 'ativa' : '' ?>" 
+                                 onclick="mudarImagem(<?= $index ?>)">
+                                <img src="uploads/<?= limpar($img['caminho']) ?>" 
+                                     alt="Miniatura <?= $index + 1 ?>">
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <?php endif; ?>
+
                 <div class="item-header">
                     <h1><?= limpar($leilao['item_nome']) ?></h1>
                     <div class="item-meta">
@@ -293,6 +331,37 @@ $msg = obterMensagem();
     </div>
 
     <script>
+        // Galeria de imagens
+        const imagens = <?= json_encode(array_column($imagens, 'caminho')) ?>;
+        let imagemAtualIndex = 0;
+
+        function mudarImagem(index) {
+            imagemAtualIndex = index;
+            document.getElementById('imagemPrincipal').src = 'uploads/' + imagens[index];
+            document.getElementById('imagemAtual').textContent = index + 1;
+            
+            // Atualizar miniaturas
+            document.querySelectorAll('.miniatura').forEach((mini, i) => {
+                mini.classList.toggle('ativa', i === index);
+            });
+        }
+
+        function proximaImagem() {
+            imagemAtualIndex = (imagemAtualIndex + 1) % imagens.length;
+            mudarImagem(imagemAtualIndex);
+        }
+
+        function imagemAnterior() {
+            imagemAtualIndex = (imagemAtualIndex - 1 + imagens.length) % imagens.length;
+            mudarImagem(imagemAtualIndex);
+        }
+
+        // Navegação por teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') imagemAnterior();
+            if (e.key === 'ArrowRight') proximaImagem();
+        });
+
         // Função para definir lance rápido
         function setLance(valor) {
             document.getElementById('valor_lance').value = valor.toFixed(2);
@@ -335,8 +404,6 @@ $msg = obterMensagem();
         // Auto-refresh a cada 30 segundos para atualizar lances
         <?php if (!$tempo['expirado'] && !$eh_dono): ?>
         setInterval(() => {
-            // Salvar posição do scroll
-            const scrollPos = window.scrollY;
             location.reload();
         }, 30000);
         <?php endif; ?>

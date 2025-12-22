@@ -46,6 +46,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $erros[] = "Selecione uma duração válida";
     }
     
+    // Validar imagens
+    $imagens_validas = [];
+    if (isset($_FILES['imagens']) && !empty($_FILES['imagens']['name'][0])) {
+        $total_imagens = count($_FILES['imagens']['name']);
+        
+        if ($total_imagens > 5) {
+            $erros[] = "Máximo de 5 imagens permitidas";
+        } else {
+            for ($i = 0; $i < $total_imagens; $i++) {
+                if ($_FILES['imagens']['error'][$i] === UPLOAD_ERR_OK) {
+                    $file = [
+                        'name' => $_FILES['imagens']['name'][$i],
+                        'type' => $_FILES['imagens']['type'][$i],
+                        'tmp_name' => $_FILES['imagens']['tmp_name'][$i],
+                        'error' => $_FILES['imagens']['error'][$i],
+                        'size' => $_FILES['imagens']['size'][$i]
+                    ];
+                    
+                    $validacao = validarImagemUpload($file);
+                    if ($validacao['valido']) {
+                        $imagens_validas[] = [
+                            'tmp_name' => $file['tmp_name'],
+                            'extensao' => $validacao['extensao']
+                        ];
+                    } else {
+                        $erros[] = $validacao['erro'] . " (imagem " . ($i + 1) . ")";
+                    }
+                }
+            }
+        }
+    }
+    
     // Se não houver erros, criar item e leilão
     if (empty($erros)) {
         try {
@@ -58,6 +90,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ");
             $stmt->execute([$nome, $descricao, $categoria, $user_id]);
             $item_id = $pdo->lastInsertId();
+            
+            // Upload de imagens
+            $upload_dir = 'uploads/';
+            if (!file_exists($upload_dir)) {
+                mkdir($upload_dir, 0755, true);
+            }
+            
+            foreach ($imagens_validas as $index => $imagem) {
+                $nome_arquivo = 'item_' . $item_id . '_' . time() . '_' . $index . '.' . $imagem['extensao'];
+                $caminho_destino = $upload_dir . $nome_arquivo;
+                
+                if (move_uploaded_file($imagem['tmp_name'], $caminho_destino)) {
+                    // Inserir registro da imagem no banco
+                    $stmt = $pdo->prepare("
+                        INSERT INTO item_imagens (item_id, caminho, ordem) 
+                        VALUES (?, ?, ?)
+                    ");
+                    $stmt->execute([$item_id, $nome_arquivo, $index]);
+                }
+            }
             
             // Calcular data de início e fim
             $inicio = date('Y-m-d H:i:s');
@@ -134,11 +186,12 @@ $msg = obterMensagem();
                     <li>Não é possível editar ou cancelar após a criação</li>
                     <li>O sistema anti-sniping estende o leilão automaticamente</li>
                     <li>Descreva o item com o máximo de detalhes possível</li>
+                    <li>Pode adicionar até 5 imagens (JPG, PNG, GIF, WEBP)</li>
                 </ul>
             </div>
 
             <div class="card">
-                <form method="POST" action="" id="formCriarItem">
+                <form method="POST" action="" id="formCriarItem" enctype="multipart/form-data">
                     
                     <div class="form-group">
                         <label for="nome">Nome do Item *</label>
@@ -165,6 +218,21 @@ $msg = obterMensagem();
                         ><?= isset($_POST['descricao']) ? limpar($_POST['descricao']) : '' ?></textarea>
                         <small>Mínimo 20 caracteres. Seja detalhado para atrair mais interessados!</small>
                         <div class="char-counter" id="descricaoCounter">0 caracteres</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="imagens">📷 Imagens do Item (Opcional - Máx: 5)</label>
+                        <input 
+                            type="file" 
+                            id="imagens" 
+                            name="imagens[]" 
+                            multiple 
+                            accept="image/*"
+                            class="input-file"
+                        >
+                        <small>Formatos aceites: JPG, PNG, GIF, WEBP. Tamanho máximo: 5MB por imagem</small>
+                        
+                        <div id="preview-container" class="preview-container"></div>
                     </div>
 
                     <div class="form-grid">
@@ -263,6 +331,38 @@ $msg = obterMensagem();
             }
         });
 
+        // Preview de imagens
+        const imagensInput = document.getElementById('imagens');
+        const previewContainer = document.getElementById('preview-container');
+        
+        imagensInput.addEventListener('change', function() {
+            previewContainer.innerHTML = '';
+            
+            if (this.files.length > 5) {
+                alert('Máximo de 5 imagens permitidas!');
+                this.value = '';
+                return;
+            }
+            
+            Array.from(this.files).forEach((file, index) => {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        const div = document.createElement('div');
+                        div.className = 'preview-item';
+                        div.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview ${index + 1}">
+                            <span class="preview-number">${index + 1}</span>
+                        `;
+                        previewContainer.appendChild(div);
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+
         // Inicializar contadores se houver valores
         if (nomeInput.value) {
             nomeInput.dispatchEvent(new Event('input'));
@@ -275,8 +375,15 @@ $msg = obterMensagem();
         document.getElementById('formCriarItem').addEventListener('submit', function(e) {
             const preco = document.getElementById('preco_inicial').value;
             const duracao = document.getElementById('duracao').options[document.getElementById('duracao').selectedIndex].text;
+            const numImagens = imagensInput.files.length;
             
-            if (!confirm(`Confirma a criação do leilão?\n\nPreço inicial: €${preco}\nDuração: ${duracao}\n\nO leilão será iniciado imediatamente e não poderá ser cancelado.`)) {
+            let mensagem = `Confirma a criação do leilão?\n\nPreço inicial: €${preco}\nDuração: ${duracao}`;
+            if (numImagens > 0) {
+                mensagem += `\nImagens: ${numImagens}`;
+            }
+            mensagem += `\n\nO leilão será iniciado imediatamente e não poderá ser cancelado.`;
+            
+            if (!confirm(mensagem)) {
                 e.preventDefault();
             }
         });
