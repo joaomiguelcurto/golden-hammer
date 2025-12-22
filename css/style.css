@@ -500,22 +500,26 @@ h2 {
 /* Imagem do leilão no card */
 .leilao-imagem {
     width: 100%;
-    height: 200px;
+    height: 220px;
     overflow: hidden;
-    background: var(--cor-fundo-escuro);
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
 }
 
 .leilao-imagem img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
     transition: transform 0.3s ease;
 }
 
 .leilao-card:hover .leilao-imagem img {
-    transform: scale(1.05);
+    transform: scale(1.08);
 }
 
 /* Ajustar padding do conteúdo quando há imagem */
