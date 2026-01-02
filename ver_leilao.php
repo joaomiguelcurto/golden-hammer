@@ -16,6 +16,90 @@ if ($leilao_id <= 0) {
     redirecionarComMensagem('inicio.php', 'Leilão não encontrado', 'erro');
 }
 
+// ======================================
+// ENDPOINT AJAX PARA ATUALIZAÇÕES EM TEMPO REAL
+// ======================================
+if (isset($_GET['ajax']) && $_GET['ajax'] === 'atualizar') {
+    header('Content-Type: application/json');
+    
+    try {
+        // Buscar estado atual do leilão
+        $stmt = $pdo->prepare("
+            SELECT 
+                l.preco_inicial,
+                l.preco_atual,
+                l.fim,
+                l.estado
+            FROM leiloes l
+            WHERE l.id = ?
+            LIMIT 1
+        ");
+        $stmt->execute([$leilao_id]);
+        $leilao = $stmt->fetch();
+        
+        if (!$leilao) {
+            echo json_encode(['erro' => 'Leilão não encontrado']);
+            exit;
+        }
+        
+        // Calcular tempo restante
+        $tempo = calcularTempoRestante($leilao['fim']);
+        
+        // Obter preço atual
+        $preco_atual = $leilao['preco_atual'] > 0 ? $leilao['preco_atual'] : $leilao['preco_inicial'];
+        
+        // Contar lances
+        $num_lances = contarLances($pdo, $leilao_id);
+        
+        // Buscar histórico de lances
+        $stmt = $pdo->prepare("
+            SELECT 
+                l.valor,
+                l.data_hora,
+                l.utilizador_id,
+                u.nome_utilizador
+            FROM lances l
+            INNER JOIN utilizadores u ON l.utilizador_id = u.id
+            WHERE l.leilao_id = ?
+            ORDER BY l.data_hora DESC
+            LIMIT 20
+        ");
+        $stmt->execute([$leilao_id]);
+        $historico = $stmt->fetchAll();
+        
+        // Preparar dados do histórico
+        $historico_formatado = array_map(function($lance) use ($user_id) {
+            return [
+                'valor' => $lance['valor'],
+                'valor_formatado' => formatarMoeda($lance['valor']),
+                'nome_utilizador' => $lance['nome_utilizador'],
+                'data_hora' => $lance['data_hora'],
+                'data_relativa' => formatarDataRelativa($lance['data_hora']),
+                'eh_meu' => $lance['utilizador_id'] == $user_id
+            ];
+        }, $historico);
+        
+        // Retornar JSON
+        echo json_encode([
+            'sucesso' => true,
+            'preco_atual' => $preco_atual,
+            'preco_formatado' => formatarMoeda($preco_atual),
+            'num_lances' => $num_lances,
+            'tempo_restante' => $tempo,
+            'tempo_formatado' => formatarTempoRestante($leilao['fim']),
+            'expirado' => $tempo['expirado'],
+            'proximo_lance_minimo' => $preco_atual + 1.00,
+            'historico' => $historico_formatado,
+            'timestamp' => time()
+        ]);
+        exit;
+        
+    } catch (Exception $e) {
+        echo json_encode(['erro' => 'Erro ao buscar dados']);
+        exit;
+    }
+}
+
 // Processar lance
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['dar_lance'])) {
     $valor_lance = trim($_POST['valor_lance'] ?? '');
@@ -401,11 +485,154 @@ $msg = obterMensagem();
         setInterval(atualizarTempo, 1000);
         <?php endif; ?>
 
-        // Auto-refresh a cada 30 segundos para atualizar lances
-        <?php if (!$tempo['expirado'] && !$eh_dono): ?>
-        setInterval(() => {
-            location.reload();
-        }, 30000);
+        // ========================================
+        // SISTEMA DE ATUALIZAÇÕES EM TEMPO REAL (AJAX)
+        // ========================================
+        <?php if (!$tempo['expirado']): ?>
+        let ultimoPreco = <?= $preco_atual ?>;
+        let ultimoNumLances = <?= $num_lances ?>;
+
+        function atualizarLeilao() {
+            fetch('ver_leilao.php?id=<?= $leilao_id ?>&ajax=atualizar')
+                .then(response => response.json())
+                .then(dados => {
+                    if (dados.erro) {
+                        console.error('Erro:', dados.erro);
+                        return;
+                    }
+
+                    // Verificar se houve mudanças
+                    const precoMudou = dados.preco_atual !== ultimoPreco;
+                    const novoLance = dados.num_lances > ultimoNumLances;
+
+                    // Atualizar preço atual
+                    const precoElemento = document.querySelector('.preco-destaque-valor');
+                    if (precoElemento && precoMudou) {
+                        precoElemento.textContent = dados.preco_formatado;
+                        
+                        // Animação de destaque
+                        precoElemento.style.animation = 'none';
+                        setTimeout(() => {
+                            precoElemento.style.animation = 'pulsar 0.5s ease-in-out';
+                        }, 10);
+                    }
+
+                    // Atualizar label do preço
+                    const labelElemento = document.querySelector('.preco-destaque-label');
+                    if (labelElemento && dados.num_lances > 0) {
+                        labelElemento.textContent = 'Lance Atual';
+                    }
+
+                    // Atualizar histórico se houve mudanças
+                    if (novoLance) {
+                        atualizarHistorico(dados.historico, dados.expirado);
+                        
+                        // Mostrar notificação
+                        mostrarNotificacao('💰 Novo lance!', dados.preco_formatado);
+                    }
+
+                    // Atualizar campo de lance mínimo
+                    const inputLance = document.getElementById('valor_lance');
+                    if (inputLance && !dados.expirado) {
+                        const valorMinimo = dados.proximo_lance_minimo.toFixed(2);
+                        inputLance.min = valorMinimo;
+                        
+                        if (parseFloat(inputLance.value) < parseFloat(valorMinimo)) {
+                            inputLance.value = valorMinimo;
+                        }
+                        
+                        const smallText = inputLance.parentElement.querySelector('small');
+                        if (smallText) {
+                            smallText.textContent = `Lance mínimo: €${valorMinimo.replace('.', ',')}`;
+                        }
+                        
+                        atualizarBotoesLanceRapido(dados.proximo_lance_minimo);
+                    }
+
+                    // Se leilão expirou
+                    if (dados.expirado && !ultimoPreco.expirado) {
+                        setTimeout(() => location.reload(), 2000);
+                    }
+
+                    // Atualizar valores para próxima comparação
+                    ultimoPreco = dados.preco_atual;
+                    ultimoNumLances = dados.num_lances;
+                })
+                .catch(error => {
+                    console.error('Erro ao atualizar:', error);
+                });
+        }
+
+        function atualizarHistorico(historico, expirado) {
+            const container = document.querySelector('.historico-lances');
+            if (!container) return;
+            
+            const titulo = container.querySelector('h3');
+            const html = historico.length > 0 ? historico.map((lance, index) => `
+                <div class="lance-item ${lance.eh_meu ? 'meu-lance' : ''}" style="animation: slideIn 0.3s ease-out">
+                    <div class="lance-valor">
+                        ${lance.valor_formatado}
+                        ${index === 0 && !expirado ? '<span class="badge-vencedor">VENCENDO</span>' : ''}
+                    </div>
+                    <div class="lance-info">
+                        <span>${lance.nome_utilizador}</span>
+                        <span>${lance.data_relativa}</span>
+                    </div>
+                </div>
+            `).join('') : '<div class="sem-lances">Nenhum lance ainda. Seja o primeiro!</div>';
+            
+            container.innerHTML = '';
+            container.appendChild(titulo);
+            container.insertAdjacentHTML('beforeend', html);
+        }
+
+        function atualizarBotoesLanceRapido(minimo) {
+            const botoes = document.querySelectorAll('.btn-lance-rapido');
+            if (botoes.length < 4) return;
+            
+            const valores = [minimo, minimo * 1.15, minimo * 1.30, minimo * 1.50];
+            const labels = ['Mínimo', '+15%', '+30%', '+50%'];
+            
+            botoes.forEach((btn, index) => {
+                const valor = valores[index].toFixed(2);
+                btn.onclick = () => setLance(valores[index]);
+                btn.innerHTML = `${labels[index]}<br>€${valor.replace('.', ',')}`;
+            });
+        }
+
+        function mostrarNotificacao(titulo, mensagem) {
+            const notif = document.createElement('div');
+            notif.className = 'notificacao-lance';
+            notif.innerHTML = `<strong>${titulo}</strong><br>${mensagem}`;
+            notif.style.cssText = `
+                position: fixed; top: 20px; right: 20px;
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                color: white; padding: 15px 25px; border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3); z-index: 10000;
+                animation: slideInRight 0.4s ease-out;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            `;
+            
+            document.body.appendChild(notif);
+            
+            setTimeout(() => {
+                notif.style.animation = 'slideOutRight 0.4s ease-out';
+                setTimeout(() => notif.remove(), 400);
+            }, 4000);
+        }
+
+        // Adicionar animações CSS
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+            @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(400px); opacity: 0; } }
+            @keyframes slideIn { from { transform: translateY(-10px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+            @keyframes pulsar { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+        `;
+        document.head.appendChild(style);
+
+        // Atualizar a cada 3 segundos
+        setInterval(atualizarLeilao, 3000);
         <?php endif; ?>
     </script>
 </body>
